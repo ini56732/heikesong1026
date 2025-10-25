@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI睡眠顾问 - AI健康管理助手</title>
+    <link rel="stylesheet" href="../../css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</head>
+<body>
+    <!-- 头部 -->
+    <header>
+        <div class="container header-content">
+            <div class="logo">
+                <i class="fas fa-heartbeat"></i> AI健康管理助手
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="../../index.html">首页</a></li>
+                    <li><a href="../assessment.html">健康评估</a></li>
+                    <li><a href="../management.html" class="active">日常管理</a></li>
+                    <li><a href="../alerts.html">预警提醒</a></li>
+                    <li><a href="../services.html">医疗服务</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- 主要内容 -->
+    <main>
+        <div class="container">
+            <div class="chat-header">
+                <div class="chat-avatar">
+                    <i class="fas fa-robot"></i>
+                </div>
+                <div class="chat-info">
+                    <h2>AI睡眠顾问</h2>
+                    <p class="chat-status">在线</p>
+                </div>
+            </div>
+            
+            <div class="wechat-chat-container">
+                <div class="chat-messages" id="chatMessages">
+                    <div class="message ai-message">
+                        <div class="message-avatar">
+                            <i class="fas fa-robot"></i>
+                        </div>
+                        <div class="message-content">
+                            <p>您好！我是您的AI睡眠顾问，可以根据您的睡眠数据和生活习惯为您提供个性化的睡眠改善建议。请问有什么我可以帮助您的吗？</p>
+                            <div class="message-time">刚刚</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="quick-function-menu">
+                    <button class="function-btn" onclick="showFunctionCard('sleep_overview')">
+                        <i class="fas fa-bed"></i>
+                        <span>睡眠概况</span>
+                    </button>
+                    <button class="function-btn" onclick="showFunctionCard('sleep_data')">
+                        <i class="fas fa-chart-line"></i>
+                        <span>睡眠数据</span>
+                    </button>
+                    <button class="function-btn" onclick="showFunctionCard('sleep_goals')">
+                        <i class="fas fa-moon"></i>
+                        <span>睡眠目标</span>
+                    </button>
+                    <button class="function-btn" onclick="showFunctionCard('sleep_analysis')">
+                        <i class="fas fa-brain"></i>
+                        <span>睡眠分析</span>
+                    </button>
+                </div>
+                
+                <div class="chat-input-area">
+                    <div class="input-container">
+                        <input type="text" id="userInput" placeholder="请输入您的问题..." onkeypress="handleKeyPress(event)">
+                        <button class="btn btn-send" id="sendButton">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                        <button class="btn btn-voice" id="micButton">
+                            <i class="fas fa-microphone"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- 页脚 -->
+    <footer>
+        <div class="container">
+            <p>&copy; 2024 AI健康管理助手. 保留所有权利.</p>
+        </div>
+    </footer>
+
+    <!-- 遮罩层 -->
+    <div class="overlay" id="overlay" onclick="hideFunctionCard()"></div>
+    
+    <!-- 功能卡片模板 -->
+    <div id="functionCards" style="display: none;">
+        <!-- 睡眠概况卡片 -->
+        <div class="function-card" id="sleepOverviewCard">
+            <div class="function-card-header">
+                <h3><i class="fas fa-bed"></i> 睡眠概况</h3>
+                <button class="close-btn" onclick="hideFunctionCard()">×</button>
+            </div>
+            <div class="card-content">
+                <p>正在加载您的睡眠数据...</p>
+            </div>
+        </div>
+        
+        <!-- 睡眠数据卡片 -->
+        <div class="function-card" id="sleepDataCard">
+            <div class="function-card-header">
+                <h3><i class="fas fa-chart-line"></i> 睡眠数据</h3>
+                <button class="close-btn" onclick="hideFunctionCard()">×</button>
+            </div>
+            <div class="card-content">
+                <p>正在加载您的睡眠记录...</p>
+            </div>
+        </div>
+        
+        <!-- 睡眠目标卡片 -->
+        <div class="function-card" id="sleepGoalsCard">
+            <div class="function-card-header">
+                <h3><i class="fas fa-moon"></i> 睡眠目标</h3>
+                <button class="close-btn" onclick="hideFunctionCard()">×</button>
+            </div>
+            <div class="card-content">
+                <p>正在加载您的睡眠目标...</p>
+            </div>
+        </div>
+        
+        <!-- 睡眠分析卡片 -->
+        <div class="function-card" id="sleepAnalysisCard">
+            <div class="function-card-header">
+                <h3><i class="fas fa-brain"></i> 睡眠分析</h3>
+                <button class="close-btn" onclick="hideFunctionCard()">×</button>
+            </div>
+            <div class="card-content">
+                <p>正在分析您的睡眠质量...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- 页脚 -->
+    <footer>
+        <div class="container">
+            <p>&copy; 2023 AI健康管理助手. 以"治未病"为核心理念，守护您的健康。</p>
+        </div>
+    </footer>
+
+    <script src="../../js/main.js"></script>
+    <script>
+        // 全局变量
+        let chatMessages = document.getElementById('chatMessages');
+        let userInput = document.getElementById('userInput');
+        let sendButton = document.getElementById('sendButton');
+        let micButton = document.getElementById('micButton');
+        let overlay = document.getElementById('overlay');
+        let functionCards = document.getElementById('functionCards');
+        
+        // 初始化聊天
+        function initializeChat() {
+            sendButton.addEventListener('click', sendMessage);
+            
+            // 语音输入功能
+            micButton.addEventListener('click', function() {
+                // 模拟语音输入
+                showNotification('语音输入功能已激活，请说话...');
+                setTimeout(() => {
+                    userInput.value = '我最近总是睡不着，有什么改善建议吗？';
+                    showNotification('语音识别完成');
+                }, 1500);
+            });
+            
+            // 模拟加载用户数据
+            setTimeout(() => {
+                addAIMessage('已加载您的睡眠数据：平均睡眠时长7.2小时，睡眠质量评分85分。');
+            }, 500);
+        }
+        
+        // 处理键盘事件
+        function handleKeyPress(event) {
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
+        }
+        
+        // 发送消息
+        async function sendMessage() {
+            const message = userInput.value.trim();
+            if (message) {
+                addUserMessage(message);
+                userInput.value = '';
+                
+                try {
+                    // 模拟API调用
+                    const response = await axios.post('/api/sleep-consultant', {
+                        message: message,
+                        timestamp: new Date().toISOString()
+                    });
+                    
+                    addAIMessage(response.data.reply || '收到您的消息，正在分析您的睡眠情况...');
+                } catch (error) {
+                    console.error('API调用失败:', error);
+                    // 模拟回复
+                    setTimeout(() => {
+                        addAIMessage('收到您的消息，正在分析您的睡眠情况...');
+                    }, 1000);
+                }
+            }
+        }
+        
+        // 发送快捷消息
+        function sendQuickMessage(message) {
+            userInput.value = message;
+            sendMessage();
+        }
+        
+        // 添加用户消息
+        function addUserMessage(message) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'message user-message';
+            messageDiv.innerHTML = `
+                <div class="message-avatar">
+                    <i class="fas fa-user"></i>
+                </div>
+                <div class="message-content">
+                    <p>${message}</p>
+                    <div class="message-time">${new Date().toLocaleTimeString('zh-CN', {hour: '2-digit', minute:'2-digit'})}</div>
+                </div>
+            `;
+            chatMessages.appendChild(messageDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+        
+        // 添加AI消息
+        function addAIMessage(message) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'message ai-message';
+            messageDiv.innerHTML = `
+                <div class="message-avatar">
+                    <i class="fas fa-robot"></i>
+                </div>
+                <div class="message-content">
+                    <p>${message}</p>
+                    <div class="message-time">${new Date().toLocaleTimeString('zh-CN', {hour: '2-digit', minute:'2-digit'})}</div>
+                </div>
+            `;
+            chatMessages.appendChild(messageDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+        
+        // 显示功能卡片
+        function showFunctionCard(cardType) {
+            const card = document.getElementById(cardType + 'Card');
+            if (card) {
+                // 加载卡片内容
+                loadCardContent(cardType, card);
+                
+                // 显示卡片和遮罩层
+                card.style.display = 'block';
+                overlay.style.display = 'block';
+                
+                // 添加到页面
+                document.body.appendChild(card);
+            }
+        }
+        
+        // 加载卡片内容
+        function loadCardContent(cardType, card) {
+            const contentDiv = card.querySelector('.card-content');
+            
+            switch(cardType) {
+                case 'sleep_overview':
+                    contentDiv.innerHTML = `
+                        <div class="sleep-stats">
+                            <div class="stat-item">
+                                <span class="stat-label">平均睡眠时长</span>
+                                <span class="stat-value">7.2小时</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">睡眠质量评分</span>
+                                <span class="stat-value">85分</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">深睡比例</span>
+                                <span class="stat-value">25%</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">入睡时间</span>
+                                <span class="stat-value">23:15</span>
+                            </div>
+                        </div>
+                        <div class="sleep-tips">
+                            <h4>改善建议</h4>
+                            <ul>
+                                <li>保持规律的睡眠时间</li>
+                                <li>睡前避免使用电子设备</li>
+                                <li>保持卧室环境舒适</li>
+                            </ul>
+                        </div>
+                    `;
+                    break;
+                    
+                case 'sleep_data':
+                    contentDiv.innerHTML = `
+                        <div class="sleep-chart">
+                            <h4>最近7天睡眠记录</h4>
+                            <div class="chart-container">
+                                <div class="chart-bar" style="height: 70%">周一<br>6.8h</div>
+                                <div class="chart-bar" style="height: 85%">周二<br>7.5h</div>
+                                <div class="chart-bar" style="height: 90%">周三<br>7.8h</div>
+                                <div class="chart-bar" style="height: 75%">周四<br>7.0h</div>
+                                <div class="chart-bar" style="height: 80%">周五<br>7.2h</div>
+                                <div class="chart-bar" style="height: 95%">周六<br>8.5h</div>
+                                <div class="chart-bar" style="height: 85%">周日<br>7.5h</div>
+                            </div>
+                        </div>
+                    `;
+                    break;
+                    
+                case 'sleep_goals':
+                    contentDiv.innerHTML = `
+                        <div class="goal-setting">
+                            <div class="current-goal">
+                                <h4>当前目标</h4>
+                                <p>目标睡眠时长：8小时/天</p>
+                                <p>目标睡眠质量：90分以上</p>
+                                <p>目标入睡时间：23:00前</p>
+                            </div>
+                            <div class="goal-progress">
+                                <h4>完成进度</h4>
+                                <div class="progress-bar">
+                                    <div class="progress" style="width: 75%">75%</div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    break;
+                    
+                case 'sleep_analysis':
+                    contentDiv.innerHTML = `
+                        <div class="analysis-result">
+                            <h4>睡眠分析报告</h4>
+                            <div class="analysis-item">
+                                <span class="analysis-label">睡眠效率</span>
+                                <span class="analysis-value good">良好</span>
+                            </div>
+                            <div class="analysis-item">
+                                <span class="analysis-label">睡眠规律性</span>
+                                <span class="analysis-value excellent">优秀</span>
+                            </div>
+                            <div class="analysis-item">
+                                <span class="analysis-label">睡眠深度</span>
+                                <span class="analysis-value average">一般</span>
+                            </div>
+                            <div class="analysis-item">
+                                <span class="analysis-label">睡眠中断</span>
+                                <span class="analysis-value good">良好</span>
+                            </div>
+                        </div>
+                    `;
+                    break;
+            }
+        }
+        
+        // 隐藏功能卡片
+        function hideFunctionCard() {
+            const cards = document.querySelectorAll('.function-card');
+            cards.forEach(card => {
+                card.style.display = 'none';
+            });
+            overlay.style.display = 'none';
+        }
+        
+        // 显示通知
+        function showNotification(message) {
+            // 简单的通知实现
+            console.log('通知:', message);
+        }
+        
+        // 页面加载完成后初始化
+        document.addEventListener('DOMContentLoaded', initializeChat);
+    </script>
+</body>
+</html>

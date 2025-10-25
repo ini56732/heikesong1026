@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI心理伙伴 - AI健康管理助手</title>
+    <link rel="stylesheet" href="../../css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</head>
+<body>
+    <!-- 头部 -->
+    <header>
+        <div class="container header-content">
+            <div class="logo">
+                <i class="fas fa-heartbeat"></i> AI健康管理助手
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="../../index.html">首页</a></li>
+                    <li><a href="../assessment.html">健康评估</a></li>
+                    <li><a href="../management.html" class="active">日常管理</a></li>
+                    <li><a href="../alerts.html">预警提醒</a></li>
+                    <li><a href="../services.html">医疗服务</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- 主要内容 -->
+    <main>
+        <div class="container">
+            <div class="chat-header">
+                <div class="chat-avatar">
+                    <i class="fas fa-robot"></i>
+                </div>
+                <div class="chat-info">
+                    <h2>AI心理伙伴</h2>
+                    <p class="chat-status">在线</p>
+                </div>
+            </div>
+            
+            <div class="wechat-chat-container">
+                <div class="chat-messages" id="chatMessages">
+                    <div class="message ai-message">
+                        <div class="message-avatar">
+                            <i class="fas fa-robot"></i>
+                        </div>
+                        <div class="message-content">
+                            <p>您好！我是您的AI心理伙伴，可以倾听您的心声，为您提供情绪支持和心理疏导。请问今天感觉怎么样？</p>
+                            <div class="message-time">刚刚</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="quick-function-menu">
+                    <button class="function-btn" onclick="showFunctionCard('mental_overview')">
+                        <i class="fas fa-brain"></i>
+                        <span>心理概况</span>
+                    </button>
+                    <button class="function-btn" onclick="showFunctionCard('mood_diary')">
+                        <i class="fas fa-book"></i>
+                        <span>心情日记</span>
+                    </button>
+                    <button class="function-btn" onclick="showFunctionCard('mental_goals')">
+                        <i class="fas fa-bullseye"></i>
+                        <span>心理目标</span>
+                    </button>
+                    <button class="function-btn" onclick="showFunctionCard('stress_test')">
+                        <i class="fas fa-heart"></i>
+                        <span>压力测试</span>
+                    </button>
+                </div>
+                
+                <div class="chat-input-area">
+                    <div class="input-container">
+                        <input type="text" id="userInput" placeholder="分享您的心情或问题..." onkeypress="handleKeyPress(event)">
+                        <button class="btn btn-send" id="sendButton">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                        <button class="btn btn-voice" id="micButton">
+                            <i class="fas fa-microphone"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- 页脚 -->
+    <footer>
+        <div class="container">
+            <p>&copy; 2024 AI健康管理助手. 保留所有权利.</p>
+        </div>
+    </footer>
+
+    <!-- 遮罩层 -->
+    <div class="overlay" id="overlay" onclick="hideFunctionCard()"></div>
+    
+    <!-- 功能卡片模板 -->
+    <div id="functionCards" style="display: none;">
+        <!-- 心理概况卡片 -->
+        <div class="function-card" id="mentalOverviewCard">
+            <div class="function-card-header">
+                <h3><i class="fas fa-brain"></i> 心理概况</h3>
+                <button class="close-btn" onclick="hideFunctionCard()">×</button>
+            </div>
+            <div class="card-content">
+                <p>正在加载您的心理数据...</p>
+            </div>
+        </div>
+        
+        <!-- 心情日记卡片 -->
+        <div class="function-card" id="moodDiaryCard">
+            <div class="function-card-header">
+                <h3><i class="fas fa-book"></i> 心情日记</h3>
+                <button class="close-btn" onclick="hideFunctionCard()">×</button>
+            </div>
+            <div class="card-content">
+                <p>正在加载您的心情记录...</p>
+            </div>
+        </div>
+        
+        <!-- 心理目标卡片 -->
+        <div class="function-card" id="mentalGoalsCard">
+            <div class="function-card-header">
+                <h3><i class="fas fa-bullseye"></i> 心理目标</h3>
+                <button class="close-btn" onclick="hideFunctionCard()">×</button>
+            </div>
+            <div class="card-content">
+                <p>正在加载您的心理目标...</p>
+            </div>
+        </div>
+        
+        <!-- 压力测试卡片 -->
+        <div class="function-card" id="stressTestCard">
+            <div class="function-card-header">
+                <h3><i class="fas fa-heart"></i> 压力测试</h3>
+                <button class="close-btn" onclick="hideFunctionCard()">×</button>
+            </div>
+            <div class="card-content">
+                <p>正在准备压力测试...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- 页脚 -->
+    <footer>
+        <div class="container">
+            <p>&copy; 2023 AI健康管理助手. 以"治未病"为核心理念，守护您的健康。</p>
+        </div>
+    </footer>
+
+    <script src="../../js/main.js"></script>
+    <script>
+        // 全局变量
+        let chatMessages = document.getElementById('chatMessages');
+        let userInput = document.getElementById('userInput');
+        let sendButton = document.getElementById('sendButton');
+        let micButton = document.getElementById('micButton');
+        let overlay = document.getElementById('overlay');
+        let functionCards = document.getElementById('functionCards');
+        
+        // 初始化聊天
+        function initializeChat() {
+            sendButton.addEventListener('click', sendMessage);
+            
+            // 模拟加载用户数据
+            setTimeout(() => {
+                addAIMessage('已加载您的心理数据：情绪稳定性良好，压力水平适中。');
+            }, 500);
+        }
+        
+        // 处理键盘事件
+        function handleKeyPress(event) {
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
+        }
+        
+        // 发送消息
+        async function sendMessage() {
+            const message = userInput.value.trim();
+            if (message) {
+                addUserMessage(message);
+                userInput.value = '';
+                
+                try {
+                    // 模拟API调用
+                    const response = await axios.post('/api/mental-partner', {
+                        message: message,
+                        timestamp: new Date().toISOString()
+                    });
+                    
+                    addAIMessage(response.data.reply || '收到您的消息，正在为您提供心理支持...');
+                } catch (error) {
+                    console.error('API调用失败:', error);
+                    // 模拟回复
+                    setTimeout(() => {
+                        addAIMessage('收到您的消息，正在为您提供心理支持...');
+                    }, 1000);
+                }
+            }
+        }
+        
+        // 添加用户消息
+        function addUserMessage(message) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'message user-message';
+            messageDiv.innerHTML = `
+                <div class="message-avatar">
+                    <i class="fas fa-user"></i>
+                </div>
+                <div class="message-content">
+                    <p>${message}</p>
+                    <div class="message-time">${new Date().toLocaleTimeString('zh-CN', {hour: '2-digit', minute:'2-digit'})}</div>
+                </div>
+            `;
+            chatMessages.appendChild(messageDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+        
+        // 添加AI消息
+        function addAIMessage(message) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'message ai-message';
+            messageDiv.innerHTML = `
+                <div class="message-avatar">
+                    <i class="fas fa-robot"></i>
+                </div>
+                <div class="message-content">
+                    <p>${message}</p>
+                    <div class="message-time">${new Date().toLocaleTimeString('zh-CN', {hour: '2-digit', minute:'2-digit'})}</div>
+                </div>
+            `;
+            chatMessages.appendChild(messageDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+        
+        // 显示功能卡片
+        function showFunctionCard(cardType) {
+            const card = document.getElementById(cardType + 'Card');
+            if (card) {
+                // 加载卡片内容
+                loadCardContent(cardType, card);
+                
+                // 显示卡片和遮罩层
+                card.style.display = 'block';
+                overlay.style.display = 'block';
+                
+                // 添加到页面
+                document.body.appendChild(card);
+            }
+        }
+        
+        // 加载卡片内容
+        function loadCardContent(cardType, card) {
+            const contentDiv = card.querySelector('.card-content');
+            
+            switch(cardType) {
+                case 'mental_overview':
+                    contentDiv.innerHTML = `
+                        <div class="mental-stats">
+                            <div class="stat-item">
+                                <span class="stat-label">情绪稳定性</span>
+                                <span class="stat-value good">良好</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">压力水平</span>
+                                <span class="stat-value average">适中</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">睡眠质量</span>
+                                <span class="stat-value good">良好</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">社交活跃度</span>
+                                <span class="stat-value excellent">优秀</span>
+                            </div>
+                        </div>
+                        <div class="mental-tips">
+                            <h4>心理健康建议</h4>
+                            <ul>
+                                <li>保持规律的作息时间</li>
+                                <li>每天进行15分钟的正念练习</li>
+                                <li>保持适度的社交活动</li>
+                            </ul>
+                        </div>
+                    `;
+                    break;
+                    
+                case 'mood_diary':
+                    contentDiv.innerHTML = `
+                        <div class="mood-diary">
+                            <h4>今日心情记录</h4>
+                            <div class="mood-input">
+                                <textarea placeholder="记录您今天的心情..." rows="4"></textarea>
+                                <button class="btn btn-primary">保存记录</button>
+                            </div>
+                            <div class="recent-moods">
+                                <h5>最近心情记录</h5>
+                                <div class="mood-item">
+                                    <span class="mood-date">今天</span>
+                                    <span class="mood-text">心情平静，工作顺利</span>
+                                </div>
+                                <div class="mood-item">
+                                    <span class="mood-date">昨天</span>
+                                    <span class="mood-text">有些焦虑，但及时调整了</span>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    break;
+                    
+                case 'mental_goals':
+                    contentDiv.innerHTML = `
+                        <div class="goal-setting">
+                            <div class="current-goal">
+                                <h4>当前目标</h4>
+                                <p>目标：每天进行正念练习</p>
+                                <p>目标：每周运动3次以上</p>
+                                <p>目标：保持积极心态</p>
+                            </div>
+                            <div class="goal-progress">
+                                <h4>完成进度</h4>
+                                <div class="progress-bar">
+                                    <div class="progress" style="width: 80%">80%</div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    break;
+                    
+                case 'stress_test':
+                    contentDiv.innerHTML = `
+                        <div class="stress-test">
+                            <h4>压力水平测试</h4>
+                            <div class="test-question">
+                                <p>1. 最近一周，您是否经常感到紧张或焦虑？</p>
+                                <div class="options">
+                                    <label><input type="radio" name="q1" value="1"> 从不</label>
+                                    <label><input type="radio" name="q1" value="2"> 偶尔</label>
+                                    <label><input type="radio" name="q1" value="3"> 经常</label>
+                                </div>
+                            </div>
+                            <button class="btn btn-primary">提交测试</button>
+                        </div>
+                    `;
+                    break;
+            }
+        }
+        
+        // 隐藏功能卡片
+        function hideFunctionCard() {
+            const cards = document.querySelectorAll('.function-card');
+            cards.forEach(card => {
+                card.style.display = 'none';
+            });
+            overlay.style.display = 'none';
+        }
+        
+        // 页面加载完成后初始化
+        document.addEventListener('DOMContentLoaded', initializeChat);
+    </script>
+</body>
+</html>

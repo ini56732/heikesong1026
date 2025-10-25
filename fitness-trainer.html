@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI健身教练 - AI健康管理助手</title>
+    <link rel="stylesheet" href="../../css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</head>
+<body>
+    <!-- 头部 -->
+    <header>
+        <div class="container header-content">
+            <div class="logo">
+                <i class="fas fa-heartbeat"></i> AI健康管理助手
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="../../index.html">首页</a></li>
+                    <li><a href="../assessment.html">健康评估</a></li>
+                    <li><a href="../management.html" class="active">日常管理</a></li>
+                    <li><a href="../alerts.html">预警提醒</a></li>
+                    <li><a href="../services.html">医疗服务</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- 主要内容 -->
+    <main>
+        <div class="container">
+            <div class="chat-header">
+                <div class="chat-avatar">
+                    <i class="fas fa-robot"></i>
+                </div>
+                <div class="chat-info">
+                    <h2>AI健身教练</h2>
+                    <p class="chat-status">在线</p>
+                </div>
+            </div>
+            
+            <div class="wechat-chat-container">
+                <div class="chat-messages" id="chatMessages">
+                    <div class="message ai-message">
+                        <div class="message-avatar">
+                            <i class="fas fa-robot"></i>
+                        </div>
+                        <div class="message-content">
+                            <p>您好！我是您的AI健身教练，可以根据您的身体状况和健身目标为您制定个性化的训练计划。请问有什么我可以帮助您的吗？</p>
+                            <div class="message-time">刚刚</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="quick-function-menu">
+                    <button class="function-btn" onclick="showFunctionCard('fitness_overview')">
+                        <i class="fas fa-dumbbell"></i>
+                        <span>体能概况</span>
+                    </button>
+                    <button class="function-btn" onclick="showFunctionCard('training_plan')">
+                        <i class="fas fa-calendar-alt"></i>
+                        <span>训练计划</span>
+                    </button>
+                    <button class="function-btn" onclick="showFunctionCard('workout_history')">
+                        <i class="fas fa-running"></i>
+                        <span>运动记录</span>
+                    </button>
+                    <button class="function-btn" onclick="showFunctionCard('fitness_goals')">
+                        <i class="fas fa-trophy"></i>
+                        <span>健身目标</span>
+                    </button>
+                </div>
+                
+                <div class="chat-input-area">
+                    <div class="input-container">
+                        <input type="text" id="userInput" placeholder="请输入您的问题..." onkeypress="handleKeyPress(event)">
+                        <button class="btn btn-send" id="sendButton">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                        <button class="btn btn-voice" id="micButton">
+                            <i class="fas fa-microphone"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- 遮罩层 -->
+    <div class="overlay" id="overlay" onclick="hideFunctionCard()"></div>
+    
+    <!-- 功能卡片模板 -->
+    <div id="functionCards" style="display: none;">
+        <!-- 体能概况卡片 -->
+        <div class="function-card" id="fitnessOverviewCard">
+            <div class="function-card-header">
+                <h3><i class="fas fa-dumbbell"></i> 体能概况</h3>
+                <button class="close-btn" onclick="hideFunctionCard()">×</button>
+            </div>
+            <div class="card-content">
+                <p>正在加载您的体能数据...</p>
+            </div>
+        </div>
+        
+        <!-- 训练计划卡片 -->
+        <div class="function-card" id="trainingPlanCard">
+            <div class="function-card-header">
+                <h3><i class="fas fa-calendar-alt"></i> 训练计划</h3>
+                <button class="close-btn" onclick="hideFunctionCard()">×</button>
+            </div>
+            <div class="card-content">
+                <p>正在制定您的个性化训练计划...</p>
+            </div>
+        </div>
+        
+        <!-- 运动记录卡片 -->
+        <div class="function-card" id="workoutHistoryCard">
+            <div class="function-card-header">
+                <h3><i class="fas fa-running"></i> 运动记录</h3>
+                <button class="close-btn" onclick="hideFunctionCard()">×</button>
+            </div>
+            <div class="card-content">
+                <p>正在加载您的运动记录...</p>
+            </div>
+        </div>
+        
+        <!-- 健身目标卡片 -->
+        <div class="function-card" id="fitnessGoalsCard">
+            <div class="function-card-header">
+                <h3><i class="fas fa-trophy"></i> 健身目标</h3>
+                <button class="close-btn" onclick="hideFunctionCard()">×</button>
+            </div>
+            <div class="card-content">
+                <p>正在加载您的健身目标...</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="../../js/main.js"></script>
+    <script>
+        // 全局变量
+        let currentFunctionCard = null;
+        const API_BASE_URL = 'http://127.0.0.1:5000';
+        
+        // 页面加载完成后初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeChat();
+            loadUserData();
+        });
+        
+        // 初始化聊天功能
+        function initializeChat() {
+            const sendButton = document.getElementById('sendButton');
+            const userInput = document.getElementById('userInput');
+            
+            sendButton.addEventListener('click', sendMessage);
+            
+            // 模拟语音输入按钮
+            document.getElementById('micButton').addEventListener('click', function() {
+                simulateVoiceInput();
+            });
+        }
+        
+        // 发送消息
+        async function sendMessage() {
+            const userInput = document.getElementById('userInput');
+            const message = userInput.value.trim();
+            
+            if (!message) return;
+            
+            // 添加用户消息到聊天界面
+            addUserMessage(message);
+            userInput.value = '';
+            
+            try {
+                // 发送消息到后端API
+                const response = await axios.post(`${API_BASE_URL}/api/ai/chat`, {
+                    message: message
+                }, {
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                // 添加AI回复到聊天界面
+                addAIMessage(response.data.reply);
+                
+            } catch (error) {
+                console.error('发送消息失败:', error);
+                addAIMessage('抱歉，我暂时无法处理您的请求。请稍后再试。');
+            }
+        }
+        
+        // 处理键盘事件
+        function handleKeyPress(event) {
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
+        }
+        
+        // 添加用户消息
+        function addUserMessage(message) {
+            const chatMessages = document.getElementById('chatMessages');
+            const messageElement = document.createElement('div');
+            messageElement.className = 'message user-message';
+            messageElement.innerHTML = `
+                <div class="message-content">
+                    <p>${message}</p>
+                    <div class="message-time">${getCurrentTime()}</div>
+                </div>
+                <div class="message-avatar">
+                    <i class="fas fa-user"></i>
+                </div>
+            `;
+            chatMessages.appendChild(messageElement);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+        
+        // 添加AI消息
+        function addAIMessage(message) {
+            const chatMessages = document.getElementById('chatMessages');
+            const messageElement = document.createElement('div');
+            messageElement.className = 'message ai-message';
+            messageElement.innerHTML = `
+                <div class="message-avatar">
+                    <i class="fas fa-robot"></i>
+                </div>
+                <div class="message-content">
+                    <p>${message}</p>
+                    <div class="message-time">${getCurrentTime()}</div>
+                </div>
+            `;
+            chatMessages.appendChild(messageElement);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+        
+        // 显示功能卡片
+        function showFunctionCard(cardType) {
+            // 显示遮罩层
+            const overlay = document.getElementById('overlay');
+            overlay.classList.add('active');
+            
+            // 隐藏当前显示的功能卡片
+            if (currentFunctionCard) {
+                currentFunctionCard.classList.remove('active');
+            }
+            
+            // 显示选中的功能卡片
+            const card = document.getElementById(cardType + 'Card');
+            if (card) {
+                card.classList.add('active');
+                currentFunctionCard = card;
+                
+                // 加载对应功能的数据
+                loadFunctionData(cardType);
+            }
+        }
+        
+        // 隐藏功能卡片
+        function hideFunctionCard() {
+            // 隐藏遮罩层
+            const overlay = document.getElementById('overlay');
+            overlay.classList.remove('active');
+            
+            if (currentFunctionCard) {
+                currentFunctionCard.classList.remove('active');
+                currentFunctionCard = null;
+            }
+        }
+        
+        // 加载功能数据
+        async function loadFunctionData(cardType) {
+            try {
+                let response;
+                
+                switch (cardType) {
+                    case 'fitness_overview':
+                        response = await axios.get(`${API_BASE_URL}/api/fitness/overview`);
+                        updateFitnessOverview(response.data);
+                        break;
+                    case 'training_plan':
+                        response = await axios.get(`${API_BASE_URL}/api/fitness/training-plan`);
+                        updateTrainingPlan(response.data);
+                        break;
+                    case 'workout_history':
+                        response = await axios.get(`${API_BASE_URL}/api/fitness/workouts`);
+                        updateWorkoutHistory(response.data);
+                        break;
+                    case 'fitness_goals':
+                        response = await axios.get(`${API_BASE_URL}/api/fitness/goals`);
+                        updateFitnessGoals(response.data);
+                        break;
+                }
+            } catch (error) {
+                console.error(`加载${cardType}数据失败:`, error);
+                showError(cardType, '加载数据失败，请稍后再试。');
+            }
+        }
+        
+        // 更新体能概况
+        function updateFitnessOverview(data) {
+            const card = document.getElementById('fitnessOverviewCard');
+            const content = card.querySelector('.card-content');
+            content.innerHTML = `
+                <div class="fitness-stats">
+                    <div class="stat-item">
+                        <span class="stat-label">本周运动时长</span>
+                        <span class="stat-value">${data.weekly_duration || 0}分钟</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">卡路里消耗</span>
+                        <span class="stat-value">${data.calories_burned || 0}千卡</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">运动频率</span>
+                        <span class="stat-value">${data.workout_frequency || 0}次/周</span>
+                    </div>
+                </div>
+            `;
+        }
+        
+        // 更新训练计划
+        function updateTrainingPlan(data) {
+            const card = document.getElementById('trainingPlanCard');
+            const content = card.querySelector('.card-content');
+            content.innerHTML = `
+                <div class="training-plan">
+                    <h4>今日训练计划</h4>
+                    <p>${data.today_plan || '暂无今日训练计划'}</p>
+                    <h4>本周计划</h4>
+                    <p>${data.weekly_plan || '暂无本周训练计划'}</p>
+                </div>
+            `;
+        }
+        
+        // 更新运动记录
+        function updateWorkoutHistory(data) {
+            const card = document.getElementById('workoutHistoryCard');
+            const content = card.querySelector('.card-content');
+            
+            if (data.workouts && data.workouts.length > 0) {
+                const workoutsHtml = data.workouts.map(workout => `
+                    <div class="workout-item">
+                        <span>${workout.date}</span>
+                        <span>${workout.type}</span>
+                        <span>${workout.duration}分钟</span>
+                    </div>
+                `).join('');
+                
+                content.innerHTML = `
+                    <div class="workout-history">
+                        <h4>最近运动记录</h4>
+                        ${workoutsHtml}
+                    </div>
+                `;
+            } else {
+                content.innerHTML = '<p>暂无运动记录</p>';
+            }
+        }
+        
+        // 更新健身目标
+        function updateFitnessGoals(data) {
+            const card = document.getElementById('fitnessGoalsCard');
+            const content = card.querySelector('.card-content');
+            
+            if (data.goals && data.goals.length > 0) {
+                const goalsHtml = data.goals.map(goal => `
+                    <div class="goal-item">
+                        <span>${goal.type}</span>
+                        <span>${goal.target}</span>
+                        <span>${goal.progress || 0}%</span>
+                    </div>
+                `).join('');
+                
+                content.innerHTML = `
+                    <div class="fitness-goals">
+                        <h4>健身目标</h4>
+                        ${goalsHtml}
+                    </div>
+                `;
+            } else {
+                content.innerHTML = '<p>暂无健身目标</p>';
+            }
+        }
+        
+        // 显示错误信息
+        function showError(cardType, message) {
+            const card = document.getElementById(cardType + 'Card');
+            const content = card.querySelector('.card-content');
+            content.innerHTML = `<p style="color: #f44336;">${message}</p>`;
+        }
+        
+        // 模拟语音输入
+        function simulateVoiceInput() {
+            const userInput = document.getElementById('userInput');
+            const voiceMessages = [
+                '帮我制定一个减脂训练计划',
+                '查看我的运动记录',
+                '我的健身目标是什么',
+                '今天的训练计划是什么'
+            ];
+            
+            const randomMessage = voiceMessages[Math.floor(Math.random() * voiceMessages.length)];
+            userInput.value = randomMessage;
+            
+            // 显示语音输入提示
+            addAIMessage('语音输入识别：' + randomMessage);
+        }
+        
+        // 获取当前时间
+        function getCurrentTime() {
+            const now = new Date();
+            return `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
+        }
+        
+        // 加载用户数据
+        async function loadUserData() {
+            try {
+                // 这里可以加载用户的基本信息
+                console.log('用户数据加载完成');
+            } catch (error) {
+                console.error('加载用户数据失败:', error);
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-require-auth="true">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI营养师 - AI健康管理助手</title>
+    <link rel="stylesheet" href="../../css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</head>
+<body>
+    <!-- 头部 -->
+    <header>
+        <div class="container header-content">
+            <div class="logo">
+                <i class="fas fa-heartbeat"></i> AI健康管理助手
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="../../index.html">首页</a></li>
+                    <li><a href="../assessment.html">健康评估</a></li>
+                    <li><a href="../management.html" class="active">日常管理</a></li>
+                    <li><a href="../alerts.html">预警提醒</a></li>
+                    <li><a href="../services.html">医疗服务</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- 主要内容 -->
+    <main>
+        <div class="container">
+            <div class="chat-header">
+                <div class="chat-avatar">
+                    <i class="fas fa-robot"></i>
+                </div>
+                <div class="chat-info">
+                    <h2>AI营养师</h2>
+                    <p class="chat-status">在线</p>
+                </div>
+            </div>
+            
+            <div class="wechat-chat-container">
+                <div class="chat-messages" id="chatMessages">
+                    <div class="message ai-message">
+                        <div class="message-avatar">
+                            <i class="fas fa-robot"></i>
+                        </div>
+                        <div class="message-content">
+                            <p>您好！我是您的AI营养师，可以根据您的健康状况和饮食偏好为您提供个性化的营养建议。请问有什么我可以帮助您的吗？</p>
+                            <div class="message-time">刚刚</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="quick-function-menu">
+                    <button class="function-btn" onclick="showFunctionCard('nutrition_overview')">
+                        <i class="fas fa-chart-pie"></i>
+                        <span>营养概况</span>
+                    </button>
+                    <button class="function-btn" onclick="showFunctionCard('diet_log')">
+                        <i class="fas fa-utensils"></i>
+                        <span>饮食记录</span>
+                    </button>
+                    <button class="function-btn" onclick="showFunctionCard('nutrition_goals')">
+                        <i class="fas fa-bullseye"></i>
+                        <span>营养目标</span>
+                    </button>
+                    <button class="function-btn" onclick="showFunctionCard('meal_plan')">
+                        <i class="fas fa-calendar"></i>
+                        <span>膳食计划</span>
+                    </button>
+                </div>
+                
+                <div class="chat-input-area">
+                    <div class="input-container">
+                        <input type="text" id="userInput" placeholder="请输入您的问题..." onkeypress="handleKeyPress(event)">
+                        <button class="btn btn-send" id="sendButton">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                        <button class="btn btn-voice" id="micButton">
+                            <i class="fas fa-microphone"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- 遮罩层 -->
+    <div class="overlay" id="overlay" onclick="hideFunctionCard()"></div>
+    
+    <!-- 功能卡片模板 -->
+    <div id="functionCards" style="display: none;">
+        <!-- 营养概况卡片 -->
+        <div class="function-card" id="nutritionOverviewCard">
+            <div class="function-card-header">
+                <h3><i class="fas fa-chart-pie"></i> 营养概况</h3>
+                <button class="close-btn" onclick="hideFunctionCard()">×</button>
+            </div>
+            <div class="card-content">
+                <p>正在加载您的营养数据...</p>
+            </div>
+        </div>
+        
+        <!-- 饮食记录卡片 -->
+        <div class="function-card" id="dietLogCard">
+            <div class="function-card-header">
+                <h3><i class="fas fa-utensils"></i> 饮食记录</h3>
+                <button class="close-btn" onclick="hideFunctionCard()">×</button>
+            </div>
+            <div class="card-content">
+                <p>正在加载您的饮食记录...</p>
+            </div>
+        </div>
+        
+        <!-- 营养目标卡片 -->
+        <div class="function-card" id="nutritionGoalsCard">
+            <div class="function-card-header">
+                <h3><i class="fas fa-bullseye"></i> 营养目标</h3>
+                <button class="close-btn" onclick="hideFunctionCard()">×</button>
+            </div>
+            <div class="card-content">
+                <p>正在加载您的营养目标...</p>
+            </div>
+        </div>
+        
+        <!-- 膳食计划卡片 -->
+        <div class="function-card" id="mealPlanCard">
+            <div class="function-card-header">
+                <h3><i class="fas fa-calendar"></i> 膳食计划</h3>
+                <button class="close-btn" onclick="hideFunctionCard()">×</button>
+            </div>
+            <div class="card-content">
+                <p>正在制定您的个性化膳食计划...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- 页脚 -->
+    <footer>
+        <div class="container">
+            <p>&copy; 2023 AI健康管理助手. 以"治未病"为核心理念，守护您的健康。</p>
+        </div>
+    </footer>
+
+    <script src="../../js/main.js"></script>
+    <script>
+        // 全局变量
+        let currentFunctionCard = null;
+        const API_BASE_URL = 'http://127.0.0.1:5000';
+        
+        // 页面加载完成后初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeChat();
+            loadUserData();
+        });
+        
+        // 初始化聊天功能
+        function initializeChat() {
+            const sendButton = document.getElementById('sendButton');
+            const userInput = document.getElementById('userInput');
+            
+            sendButton.addEventListener('click', sendMessage);
+            
+            // 模拟语音输入按钮
+            document.getElementById('micButton').addEventListener('click', function() {
+                simulateVoiceInput();
+            });
+        }
+        
+        // 发送消息
+        async function sendMessage() {
+            const userInput = document.getElementById('userInput');
+            const message = userInput.value.trim();
+            
+            if (!message) return;
+            
+            // 添加用户消息到聊天界面
+            addUserMessage(message);
+            userInput.value = '';
+            
+            try {
+                // 获取认证令牌
+                const token = localStorage.getItem('access_token');
+                
+                // 发送消息到后端API
+                const response = await axios.post(`${API_BASE_URL}/api/nutritionist/chat`, {
+                    message: message
+                }, {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': token ? `Bearer ${token}` : ''
+                    }
+                });
+                
+                // 添加AI回复到聊天界面
+                addAIMessage(response.data.reply);
+                
+            } catch (error) {
+                console.error('发送消息失败:', error);
+                
+                // 检查是否是认证错误
+                if (error.response && error.response.status === 401) {
+                    addAIMessage('请先登录后再与营养师对话。');
+                    // 重定向到登录页面
+                    setTimeout(() => {
+                        window.location.href = '/pages/login.html';
+                    }, 2000);
+                } else {
+                    addAIMessage('抱歉，我暂时无法处理您的请求。请稍后再试。');
+                }
+            }
+        }
+        
+        // 处理键盘事件
+        function handleKeyPress(event) {
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
+        }
+        
+        // 模拟语音输入
+        function simulateVoiceInput() {
+            showNotification('语音输入功能已激活，请说话...');
+            setTimeout(() => {
+                const userInput = document.getElementById('userInput');
+                const messages = [
+                    '我想了解如何通过饮食改善睡眠质量',
+                    '请给我一些减肥餐的建议',
+                    '如何增加蛋白质摄入量',
+                    '适合糖尿病患者的饮食建议'
+                ];
+                userInput.value = messages[Math.floor(Math.random() * messages.length)];
+                showNotification('语音识别完成');
+            }, 1500);
+        }
+        
+        // 添加用户消息
+        function addUserMessage(text) {
+            const chatMessages = document.getElementById('chatMessages');
+            const messageDiv = document.createElement('div');
+            messageDiv.classList.add('message', 'user-message');
+            
+            messageDiv.innerHTML = `
+                <div class="message-avatar">
+                    <i class="fas fa-user"></i>
+                </div>
+                <div class="message-content">
+                    <p>${text}</p>
+                    <div class="message-time">${getCurrentTime()}</div>
+                </div>
+            `;
+            
+            chatMessages.appendChild(messageDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+        
+        // 添加AI消息
+        function addAIMessage(text) {
+            const chatMessages = document.getElementById('chatMessages');
+            const messageDiv = document.createElement('div');
+            messageDiv.classList.add('message', 'ai-message');
+            
+            messageDiv.innerHTML = `
+                <div class="message-avatar">
+                    <i class="fas fa-robot"></i>
+                </div>
+                <div class="message-content">
+                    <p>${text}</p>
+                    <div class="message-time">${getCurrentTime()}</div>
+                </div>
+            `;
+            
+            chatMessages.appendChild(messageDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+        
+        // 获取当前时间
+        function getCurrentTime() {
+            const now = new Date();
+            return `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
+        }
+        
+        // 加载用户数据
+        function loadUserData() {
+            // 模拟加载用户数据
+            setTimeout(() => {
+                showNotification('营养师数据加载完成');
+            }, 500);
+        }
+        
+        // 显示功能卡片
+        function showFunctionCard(cardType) {
+            const overlay = document.getElementById('overlay');
+            const card = document.getElementById(cardType + 'Card');
+            
+            if (card) {
+                currentFunctionCard = cardType;
+                overlay.style.display = 'block';
+                card.style.display = 'block';
+                
+                // 加载卡片内容
+                loadCardContent(cardType);
+            }
+        }
+        
+        // 隐藏功能卡片
+        function hideFunctionCard() {
+            const overlay = document.getElementById('overlay');
+            if (currentFunctionCard) {
+                const card = document.getElementById(currentFunctionCard + 'Card');
+                if (card) {
+                    card.style.display = 'none';
+                }
+                currentFunctionCard = null;
+            }
+            overlay.style.display = 'none';
+        }
+        
+        // 加载卡片内容
+        function loadCardContent(cardType) {
+            const card = document.getElementById(cardType + 'Card');
+            if (!card) return;
+            
+            const content = card.querySelector('.card-content');
+            
+            switch (cardType) {
+                case 'nutrition_overview':
+                    content.innerHTML = `
+                        <h4>今日营养摄入</h4>
+                        <div class="nutrition-stats">
+                            <div class="stat-item">
+                                <span class="stat-label">蛋白质</span>
+                                <span class="stat-value">45g/60g</span>
+                                <div class="progress-bar">
+                                    <div class="progress" style="width: 75%"></div>
+                                </div>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">碳水化合物</span>
+                                <span class="stat-value">180g/220g</span>
+                                <div class="progress-bar">
+                                    <div class="progress" style="width: 82%"></div>
+                                </div>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">脂肪</span>
+                                <span class="stat-value">40g/50g</span>
+                                <div class="progress-bar">
+                                    <div class="progress" style="width: 80%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    break;
+                case 'diet_log':
+                    content.innerHTML = `
+                        <h4>今日饮食记录</h4>
+                        <div class="diet-log">
+                            <div class="log-item">
+                                <span class="log-time">08:00</span>
+                                <span class="log-food">牛奶200ml + 全麦面包2片</span>
+                            </div>
+                            <div class="log-item">
+                                <span class="log-time">12:30</span>
+                                <span class="log-food">鸡胸肉150g + 蔬菜沙拉</span>
+                            </div>
+                            <div class="log-item">
+                                <span class="log-time">18:00</span>
+                                <span class="log-food">鱼肉200g + 糙米饭</span>
+                            </div>
+                        </div>
+                        <button class="btn btn-primary" onclick="addDietRecord()">添加记录</button>
+                    `;
+                    break;
+                case 'nutrition_goals':
+                    content.innerHTML = `
+                        <h4>营养目标</h4>
+                        <div class="goals-list">
+                            <div class="goal-item">
+                                <span class="goal-name">每日蛋白质摄入</span>
+                                <span class="goal-target">60g</span>
+                            </div>
+                            <div class="goal-item">
+                                <span class="goal-name">每日热量控制</span>
+                                <span class="goal-target">1800kcal</span>
+                            </div>
+                            <div class="goal-item">
+                                <span class="goal-name">每周减重目标</span>
+                                <span class="goal-target">0.5kg</span>
+                            </div>
+                        </div>
+                        <button class="btn btn-primary" onclick="editGoals()">编辑目标</button>
+                    `;
+                    break;
+                case 'meal_plan':
+                    content.innerHTML = `
+                        <h4>本周膳食计划</h4>
+                        <div class="meal-plan">
+                            <div class="plan-day">
+                                <span class="day-name">周一</span>
+                                <span class="day-meals">高蛋白早餐 + 轻食午餐 + 低脂晚餐</span>
+                            </div>
+                            <div class="plan-day">
+                                <span class="day-name">周二</span>
+                                <span class="day-meals">水果早餐 + 均衡午餐 + 素食晚餐</span>
+                            </div>
+                        </div>
+                        <button class="btn btn-primary" onclick="generatePlan()">生成新计划</button>
+                    `;
+                    break;
+            }
+        }
+        
+        // 添加饮食记录
+        function addDietRecord() {
+            showNotification('正在打开饮食记录添加界面...');
+        }
+        
+        // 编辑目标
+        function editGoals() {
+            showNotification('正在打开目标编辑界面...');
+        }
+        
+        // 生成新计划
+        function generatePlan() {
+            showNotification('正在生成新的膳食计划...');
+        }
+    </script>
+</body>
+</html>
