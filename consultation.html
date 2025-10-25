@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>在线问诊 - 健康管理平台</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/consultation.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="../js/auth.js"></script>
+    <script src="../js/api-client.js"></script>
+</head>
+<body>
+    <!-- 头部导航 -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <button class="back-btn" onclick="goBack()">
+                    <i class="fas fa-arrow-left"></i>
+                </button>
+                <h1>在线问诊</h1>
+                <div class="header-actions">
+                    <button class="icon-btn" onclick="toggleSearch()">
+                        <i class="fas fa-search"></i>
+                    </button>
+                    <button class="icon-btn" onclick="showFilter()">
+                        <i class="fas fa-filter"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- 搜索区域 -->
+    <div id="search-section" class="search-section hidden">
+        <div class="container">
+            <div class="search-box">
+                <i class="fas fa-search"></i>
+                <input type="text" id="doctor-search" placeholder="搜索医生姓名、科室或专长...">
+                <button class="search-cancel" onclick="hideSearch()">取消</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 筛选面板 -->
+    <div id="filter-panel" class="filter-panel hidden">
+        <div class="container">
+            <div class="filter-header">
+                <h3>筛选条件</h3>
+                <button class="close-btn" onclick="hideFilter()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="filter-options">
+                <div class="filter-group">
+                    <label>科室</label>
+                    <select id="department-filter">
+                        <option value="">全部科室</option>
+                        <option value="内科">内科</option>
+                        <option value="外科">外科</option>
+                        <option value="儿科">儿科</option>
+                        <option value="妇产科">妇产科</option>
+                        <option value="皮肤科">皮肤科</option>
+                        <option value="眼科">眼科</option>
+                        <option value="耳鼻喉科">耳鼻喉科</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>职称</label>
+                    <select id="title-filter">
+                        <option value="">全部职称</option>
+                        <option value="主任医师">主任医师</option>
+                        <option value="副主任医师">副主任医师</option>
+                        <option value="主治医师">主治医师</option>
+                        <option value="住院医师">住院医师</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>评分</label>
+                    <select id="rating-filter">
+                        <option value="">全部评分</option>
+                        <option value="4.5">4.5分以上</option>
+                        <option value="4.0">4.0分以上</option>
+                        <option value="3.5">3.5分以上</option>
+                    </select>
+                </div>
+            </div>
+            <div class="filter-actions">
+                <button class="btn-secondary" onclick="resetFilters()">重置</button>
+                <button class="btn-primary" onclick="applyFilters()">应用</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 主要内容区域 -->
+    <main class="main-content">
+        <div class="container">
+            <!-- 医生列表 -->
+            <section id="doctor-list" class="doctor-list">
+                <div class="section-header">
+                    <h2>推荐医生</h2>
+                    <span class="doctor-count">共 <span id="total-doctors">12</span> 位医生</span>
+                </div>
+                
+                <div id="doctors-container" class="doctors-container">
+                    <!-- 医生卡片将通过JavaScript动态生成 -->
+                </div>
+            </section>
+
+            <!-- 医生详情模态框 -->
+            <div id="doctor-detail-modal" class="modal hidden">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3 id="doctor-detail-name">医生详情</h3>
+                        <button class="close-btn" onclick="closeDoctorDetail()">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div id="doctor-detail-content">
+                            <!-- 医生详情内容将通过JavaScript动态生成 -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 预约模态框 -->
+            <div id="appointment-modal" class="modal hidden">
+                <div class="modal-content appointment-modal">
+                    <div class="modal-header">
+                        <h3>预约问诊</h3>
+                        <button class="close-btn" onclick="closeAppointment()">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="appointment-info">
+                            <div class="doctor-summary">
+                                <img id="appointment-avatar" src="" alt="医生头像">
+                                <div class="doctor-info">
+                                    <h4 id="appointment-name"></h4>
+                                    <p id="appointment-department"></p>
+                                </div>
+                            </div>
+                            <div class="appointment-form">
+                                <div class="form-group">
+                                    <label>预约时间</label>
+                                    <input type="datetime-local" id="appointment-time" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>症状描述</label>
+                                    <textarea id="symptoms" placeholder="请详细描述您的症状..." rows="4" required></textarea>
+                                </div>
+                                <div class="form-group">
+                                    <label>联系方式</label>
+                                    <input type="tel" id="contact-phone" placeholder="请输入您的手机号码" required>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn-secondary" onclick="closeAppointment()">取消</button>
+                        <button class="btn-primary" onclick="submitAppointment()">确认预约</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 聊天界面 -->
+            <div id="chat-interface" class="chat-interface hidden">
+                <div class="chat-header">
+                    <button class="back-btn" onclick="closeChat()">
+                        <i class="fas fa-arrow-left"></i>
+                    </button>
+                    <div class="chat-doctor-info">
+                        <img id="chat-avatar" src="" alt="医生头像">
+                        <div>
+                            <h4 id="chat-doctor-name"></h4>
+                            <span id="chat-status" class="status-online">在线</span>
+                        </div>
+                    </div>
+                    <div class="chat-actions">
+                        <button class="icon-btn" onclick="startVoiceCall()">
+                            <i class="fas fa-phone"></i>
+                        </button>
+                        <button class="icon-btn" onclick="startVideoCall()">
+                            <i class="fas fa-video"></i>
+                        </button>
+                    </div>
+                </div>
+                <div id="chat-messages" class="chat-messages">
+                    <!-- 聊天消息将通过JavaScript动态生成 -->
+                </div>
+                <div class="chat-input">
+                    <div class="input-actions">
+                        <button class="icon-btn" onclick="showAttachmentMenu()">
+                            <i class="fas fa-plus"></i>
+                        </button>
+                        <button class="icon-btn" onclick="attachImage()">
+                            <i class="fas fa-image"></i>
+                        </button>
+                    </div>
+                    <input type="text" id="message-input" placeholder="输入消息..." onkeypress="handleKeyPress(event)">
+                    <button class="send-btn" onclick="sendMessage()">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="../js/main.js"></script>
+    <script src="../js/consultation.js"></script>
+    <script>
+        // 获取北京时间
+        function getCurrentDateTime() {
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const day = String(now.getDate()).padStart(2, '0');
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            return `${year}-${month}-${day}T${hours}:${minutes}`;
+        }
+        
+        // 设置予约时间的最小值
+        document.addEventListener('DOMContentLoaded', function() {
+            const appointmentTimeInput = document.getElementById('appointment-time');
+            if (appointmentTimeInput) {
+                appointmentTimeInput.min = getCurrentDateTime();
+            }
+        });
+    </script>
+</body>
+</html>

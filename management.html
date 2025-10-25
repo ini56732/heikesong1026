@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>日常管理 - AI健康管理助手</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .auth-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-left: 2rem;
+        }
+        .user-info {
+            color: white;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+        .logout-btn {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: 1px solid rgba(255,255,255,0.3);
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+        .logout-btn:hover {
+            background: rgba(255,255,255,0.3);
+            transform: translateY(-1px);
+        }
+        #login-link {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: 1px solid rgba(255,255,255,0.3);
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+        #login-link:hover {
+            background: rgba(255,255,255,0.3);
+            transform: translateY(-1px);
+        }
+    </style>
+</head>
+<body>
+    <!-- 头部 -->
+    <header>
+        <div class="container header-content">
+            <div class="logo">
+                <i class="fas fa-heartbeat"></i> AI健康管理助手
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="../index.html">首页</a></li>
+                    <li><a href="assessment.html">健康评估</a></li>
+                    <li><a href="management.html" class="active">日常管理</a></li>
+                    <li><a href="alerts.html">预警提醒</a></li>
+                    <li><a href="services.html">医疗服务</a></li>
+                </ul>
+            </nav>
+            <div class="auth-actions">
+                <div class="user-info" id="user-info"></div>
+                <button class="logout-btn" id="logout-btn" onclick="logout()" style="display:none;">登出</button>
+                <a href="login.html" class="btn btn-small" id="login-link" style="margin: 0;">登录</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- 主要内容 -->
+    <main>
+        <div class="container">
+            <h1 class="section-title">个性化日常管理</h1>
+            
+            <div class="card">
+                <h2 class="card-title">今日计划</h2>
+                <p class="card-content">根据您的健康画像生成的个性化建议</p>
+                
+                <div class="plan-item">
+                    <span class="plan-time">08:00</span>
+                    <span class="plan-desc">早餐建议：燕麦粥配水果</span>
+                    <button class="btn-small btn-complete" onclick="completePlan(1)">完成</button>
+                </div>
+                
+                <div class="plan-item">
+                    <span class="plan-time">10:00</span>
+                    <span class="plan-desc">站立活动5分钟</span>
+                    <button class="btn-small btn-complete" onclick="completePlan(2)">完成</button>
+                </div>
+                
+                <div class="plan-item">
+                    <span class="plan-time">12:30</span>
+                    <span class="plan-desc">午餐建议：清蒸鱼配蔬菜</span>
+                    <button class="btn-small btn-complete" onclick="completePlan(3)">完成</button>
+                </div>
+                
+                <div class="plan-item">
+                    <span class="plan-time">15:00</span>
+                    <span class="plan-desc">眼保健操提醒</span>
+                    <button class="btn-small btn-complete" onclick="completePlan(4)">完成</button>
+                </div>
+                
+                <div class="plan-item">
+                    <span class="plan-time">19:00</span>
+                    <span class="plan-desc">晚餐建议：蔬菜沙拉配鸡胸肉</span>
+                    <button class="btn-small btn-complete" onclick="completePlan(5)">完成</button>
+                </div>
+            </div>
+            
+            <div class="features">
+                <div class="feature-card">
+                    <i class="fas fa-utensils feature-icon"></i>
+                    <h3>AI营养师</h3>
+                    <p>基于您的身体状况和偏好，定制每日营养方案</p>
+                    <a href="ai-services/nutritionist.html" class="btn btn-outline">获取营养建议</a>
+                </div>
+                
+                <div class="feature-card">
+                    <i class="fas fa-dumbbell feature-icon"></i>
+                    <h3>AI健身教练</h3>
+                    <p>根据您的体能水平和目标，制定个性化训练计划</p>
+                    <a href="ai-services/fitness-trainer.html" class="btn btn-outline">获取训练计划</a>
+                </div>
+                
+                <div class="feature-card">
+                    <i class="fas fa-bed feature-icon"></i>
+                    <h3>AI睡眠顾问</h3>
+                    <p>分析睡眠数据，提供改善睡眠质量的专业建议</p>
+                    <a href="ai-services/sleep-consultant.html" class="btn btn-outline">获取睡眠建议</a>
+                </div>
+                
+                <div class="feature-card">
+                    <i class="fas fa-comments feature-icon"></i>
+                    <h3>AI心理伙伴</h3>
+                    <p>提供心理健康支持和情绪疏导</p>
+                    <a href="ai-services/mental-partner.html" class="btn btn-outline">获取心理支持</a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- 页脚 -->
+    <footer>
+        <div class="container">
+            <p>&copy; 2023 AI健康管理助手. 以"治未病"为核心理念，守护您的健康。</p>
+        </div>
+    </footer>
+
+    <script src="../js/main.js"></script>
+    <script src="../js/auth.js"></script>
+    <script>
+        // 页面加载完成后更新用户信息
+        document.addEventListener('DOMContentLoaded', function() {
+            updateUserInfo();
+        });
+        
+        // 更新用户信息展示
+        function updateUserInfo() {
+            const userInfo = document.getElementById('user-info');
+            const logoutBtn = document.getElementById('logout-btn');
+            const loginLink = document.getElementById('login-link');
+            
+            const user = AUTH.getCurrentUser();
+            
+            if (user) {
+                userInfo.textContent = '欢迎, ' + user.username + '!';
+                logoutBtn.style.display = 'inline-block';
+                loginLink.style.display = 'none';
+            } else {
+                userInfo.textContent = '';
+                logoutBtn.style.display = 'none';
+                loginLink.style.display = 'inline-block';
+            }
+        }
+        
+        // 登出函数
+        function logout() {
+            if (confirm('你确定要登出吗？')) {
+                AUTH.logout();
+            }
+        }
+        
+        function completePlan(id) {
+            const button = event.target;
+            button.textContent = '已完成';
+            button.classList.add('completed');
+            button.disabled = true;
+            
+            // 这里可以添加实际的计划完成逻辑
+            showNotification(`计划 ${id} 已标记为完成`);
+        }
+    </script>
+</body>
+</html>

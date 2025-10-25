@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>医疗服务 - AI健康管理助手</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .auth-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-left: 2rem;
+        }
+        .user-info {
+            color: white;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+        .logout-btn {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: 1px solid rgba(255,255,255,0.3);
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+        .logout-btn:hover {
+            background: rgba(255,255,255,0.3);
+            transform: translateY(-1px);
+        }
+        #login-link {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: 1px solid rgba(255,255,255,0.3);
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+        #login-link:hover {
+            background: rgba(255,255,255,0.3);
+            transform: translateY(-1px);
+        }
+    </style>
+    <script src="../js/auth.js"></script>
+    <script src="../js/api-client.js"></script>
+</head>
+<body>
+    <!-- 头部 -->
+    <header>
+        <div class="container header-content">
+            <div class="logo">
+                <i class="fas fa-heartbeat"></i> AI健康管理助手
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="../index.html">首页</a></li>
+                    <li><a href="assessment.html">健康评估</a></li>
+                    <li><a href="management.html">日常管理</a></li>
+                    <li><a href="alerts.html">预警提醒</a></li>
+                    <li><a href="services.html" class="active">医疗服务</a></li>
+                </ul>
+            </nav>
+            <div class="auth-actions">
+                <div class="user-info" id="user-info"></div>
+                <button class="logout-btn" id="logout-btn" onclick="logout()" style="display:none;">登出</button>
+                <a href="login.html" class="btn btn-small" id="login-link" style="margin: 0;">登录</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- 主要内容 -->
+    <main>
+        <div class="container">
+            <h1 class="section-title">专业医疗健康服务对接</h1>
+            
+            <div class="card">
+                <h2 class="card-title">AI症状自诊</h2>
+                <p class="card-content">基于您的症状描述，提供初步分析和建议</p>
+                
+                <form id="diagnosis-form">
+                    <div class="form-group">
+                        <label for="symptoms">主要症状描述</label>
+                        <textarea id="symptoms" name="symptoms" rows="4" placeholder="请详细描述您的症状，如：头痛、发热、咳嗽等..." required></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="duration">持续时间</label>
+                        <select id="duration" name="duration" required>
+                            <option value="">请选择</option>
+                            <option value="hours">几小时内</option>
+                            <option value="days">几天内</option>
+                            <option value="weeks">几周内</option>
+                            <option value="months">几个月内</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="severity">症状严重程度</label>
+                        <div class="slider-container">
+                            <input type="range" id="severity" name="severity" min="1" max="10" value="5">
+                            <span id="severity-value">5</span>
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="btn">开始自诊</button>
+                </form>
+                
+                <div id="diagnosis-result" class="diagnosis-result" style="display: none;">
+                    <h3>初步诊断结果</h3>
+                    <div class="result-content">
+                        <p><strong>可能原因：</strong>根据您的描述，可能是普通感冒或过敏反应</p>
+                        <p><strong>建议：</strong></p>
+                        <ul>
+                            <li>多休息，保持充足睡眠</li>
+                            <li>多喝水，保持水分充足</li>
+                            <li>如症状持续加重或出现高热，请及时就医</li>
+                        </ul>
+                        <p><strong>紧急程度：</strong><span class="severity-low">低</span></p>
+                    </div>
+                    <button class="btn btn-outline" onclick="consultDoctor()">在线咨询医生</button>
+                </div>
+            </div>
+            
+            <div class="features">
+                <div class="feature-card">
+                    <i class="fas fa-user-md feature-icon"></i>
+                    <h3>在线问诊</h3>
+                    <p>连接三甲医院医生，提供在线问诊服务</p>
+                    <button class="btn btn-outline" onclick="window.location.href='consultation.html'">立即问诊</button>
+                </div>
+                
+                <div class="feature-card">
+                    <i class="fas fa-file-alt feature-icon"></i>
+                    <h3>报告解读</h3>
+                    <p>专业医生帮您解读体检报告和化验单</p>
+                    <button class="btn btn-outline" onclick="interpretReport()">上传报告</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- 页脚 -->
+    <footer>
+        <div class="container">
+            <p>&copy; 2023 AI健康管理助手. 以"治未病"为核心理念，守护您的健康。</p>
+        </div>
+    </footer>
+
+    <script src="../js/main.js"></script>
+    <script>
+        // 页面加载完成后更新用户信息
+        document.addEventListener('DOMContentLoaded', function() {
+            updateUserInfo();
+        });
+        
+        // 更新用户信息展示
+        function updateUserInfo() {
+            const userInfo = document.getElementById('user-info');
+            const logoutBtn = document.getElementById('logout-btn');
+            const loginLink = document.getElementById('login-link');
+            
+            const user = AUTH.getCurrentUser();
+            
+            if (user) {
+                userInfo.textContent = '欢迎, ' + user.username + '!';
+                logoutBtn.style.display = 'inline-block';
+                loginLink.style.display = 'none';
+            } else {
+                userInfo.textContent = '';
+                logoutBtn.style.display = 'none';
+                loginLink.style.display = 'inline-block';
+            }
+        }
+        
+        // 登出函数
+        function logout() {
+            if (confirm('你确定要登出吗？')) {
+                AUTH.logout();
+            }
+        }
+        
+        // 症状严重程度滑块
+        const severitySlider = document.getElementById('severity');
+        const severityValue = document.getElementById('severity-value');
+        
+        if (severitySlider) {
+            severitySlider.addEventListener('input', function() {
+                severityValue.textContent = this.value;
+            });
+        }
+        
+        // 表单提交处理
+        const diagnosisForm = document.getElementById('diagnosis-form');
+        if (diagnosisForm) {
+            diagnosisForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                handleSymptomDiagnosis(this);
+            });
+        }
+        
+        /**
+         * 处理症状自诊
+         */
+        function handleSymptomDiagnosis(form) {
+            const symptoms = form.querySelector('#symptoms').value.trim();
+            const duration = form.querySelector('#duration').value;
+            const severity = form.querySelector('#severity').value;
+            
+            if (!symptoms || !duration) {
+                showNotification('请填写症状信息', 'error');
+                return;
+            }
+            
+            // 模拟诊断超时
+            showNotification('AI正在分析您的症状...', 'info');
+            
+            setTimeout(() => {
+                // 显示诊断结果
+                const resultElement = document.getElementById('diagnosis-result');
+                if (resultElement) {
+                    resultElement.style.display = 'block';
+                    showNotification('诊断完成，请查看结果', 'success');
+                }
+            }, 2000);
+        }
+        
+        /**
+         * 咨询医生
+         */
+        function consultDoctor() {
+            if (!AUTH.isLoggedIn()) {
+                showNotification('请先登录', 'warning');
+                window.location.href = 'login.html';
+                return;
+            }
+            window.location.href = 'consultation.html';
+        }
+        
+        /**
+         * 解读报告
+         */
+        function interpretReport() {
+            if (!AUTH.isLoggedIn()) {
+                showNotification('请先登录', 'warning');
+                window.location.href = 'login.html';
+                return;
+            }
+            showNotification('请选择你的体检报告', 'info');
+        }
+    </script>
+</body>
+</html>

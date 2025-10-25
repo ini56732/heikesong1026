@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>健康评估报告 - AI健康管理助手</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <!-- 头部 -->
+    <header>
+        <div class="container header-content">
+            <div class="logo">
+                <i class="fas fa-heartbeat"></i> AI健康管理助手
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="../index.html">首页</a></li>
+                    <li><a href="assessment.html">健康评估</a></li>
+                    <li><a href="management.html">日常管理</a></li>
+                    <li><a href="alerts.html">预警提醒</a></li>
+                    <li><a href="services.html">医疗服务</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- 主要内容 -->
+    <main>
+        <div class="container">
+            <!-- 返回按钮和标题 -->
+            <div class="report-header">
+                <button class="btn btn-outline" onclick="goBack()">
+                    <i class="fas fa-arrow-left"></i> 返回
+                </button>
+                <h1 class="section-title">您的健康评估报告</h1>
+                <div class="report-date">生成时间: <span id="report-date"></span></div>
+            </div>
+
+            <!-- 健康评分卡片 -->
+            <div class="card health-score-card">
+                <div class="score-display">
+                    <div class="score-circle">
+                        <span class="score-value" id="overall-score">85</span>
+                        <span class="score-label">综合评分</span>
+                    </div>
+                    <div class="score-details">
+                        <h3>健康状况评级: <span class="rating-excellent" id="health-rating">优秀</span></h3>
+                        <p>您的整体健康状况良好，继续保持健康的生活方式！</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 健康概览卡片 -->
+            <div class="card health-overview-card">
+                <h2 class="card-title">健康概览</h2>
+                <div class="chart-container">
+                    <canvas id="health-radar-chart"></canvas>
+                </div>
+                <div class="risk-factors">
+                    <h4>主要风险因素提示</h4>
+                    <ul id="risk-factors-list">
+                        <li>运动频率偏低</li>
+                        <li>睡眠质量有待改善</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- 生活习惯分析卡片 -->
+            <div class="card lifestyle-card">
+                <h2 class="card-title">生活习惯分析</h2>
+                <div class="lifestyle-grid">
+                    <div class="lifestyle-item">
+                        <div class="progress-container">
+                            <div class="progress-label">运动频率</div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 60%"></div>
+                            </div>
+                            <span class="progress-value">60%</span>
+                        </div>
+                        <p class="lifestyle-desc">建议增加每周运动次数至3-4次</p>
+                    </div>
+                    <div class="lifestyle-item">
+                        <div class="progress-container">
+                            <div class="progress-label">睡眠质量</div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 70%"></div>
+                            </div>
+                            <span class="progress-value">70%</span>
+                        </div>
+                        <p class="lifestyle-desc">睡眠时间充足，但质量有待提升</p>
+                    </div>
+                    <div class="lifestyle-item">
+                        <div class="progress-container">
+                            <div class="progress-label">压力水平</div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 50%"></div>
+                            </div>
+                            <span class="progress-value">50%</span>
+                        </div>
+                        <p class="lifestyle-desc">压力水平中等，建议学习放松技巧</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 身体指标分析卡片 -->
+            <div class="card body-metrics-card">
+                <h2 class="card-title">身体指标分析</h2>
+                <div class="bmi-section">
+                    <h3>BMI指数: <span id="bmi-value">22.5</span> (<span class="bmi-normal">正常</span>)</h3>
+                    <div class="bmi-chart">
+                        <div class="bmi-scale">
+                            <span>偏瘦</span>
+                            <span>正常</span>
+                            <span>超重</span>
+                            <span>肥胖</span>
+                        </div>
+                        <div class="bmi-indicator" style="left: 45%"></div>
+                    </div>
+                </div>
+                <div class="weight-management">
+                    <h4>体重管理建议</h4>
+                    <p>当前体重在理想范围内，建议保持现有体重并增加肌肉含量。</p>
+                </div>
+                <div class="cardiovascular-risk">
+                    <h4>心血管健康风险评估</h4>
+                    <p>基于您的年龄和生活方式，心血管疾病风险为<span class="risk-low">低风险</span>。</p>
+                </div>
+            </div>
+
+            <!-- 疾病风险预测卡片 -->
+            <div class="card disease-risk-card">
+                <h2 class="card-title">疾病风险预测</h2>
+                <div class="risk-grid">
+                    <div class="risk-item">
+                        <div class="risk-name">糖尿病</div>
+                        <div class="risk-probability">
+                            <div class="risk-bar">
+                                <div class="risk-fill" style="width: 15%"></div>
+                            </div>
+                            <span>15%</span>
+                        </div>
+                        <span class="risk-level low">低风险</span>
+                    </div>
+                    <div class="risk-item">
+                        <div class="risk-name">高血压</div>
+                        <div class="risk-probability">
+                            <div class="risk-bar">
+                                <div class="risk-fill" style="width: 25%"></div>
+                            </div>
+                            <span>25%</span>
+                        </div>
+                        <span class="risk-level medium">中风险</span>
+                    </div>
+                    <div class="risk-item">
+                        <div class="risk-name">心脏病</div>
+                        <div class="risk-probability">
+                            <div class="risk-bar">
+                                <div class="risk-fill" style="width: 10%"></div>
+                            </div>
+                            <span>10%</span>
+                        </div>
+                        <span class="risk-level low">低风险</span>
+                    </div>
+                    <div class="risk-item">
+                        <div class="risk-name">骨质疏松</div>
+                        <div class="risk-probability">
+                            <div class="risk-bar">
+                                <div class="risk-fill" style="width: 30%"></div>
+                            </div>
+                            <span>30%</span>
+                        </div>
+                        <span class="risk-level medium">中风险</span>
+                    </div>
+                </div>
+                <div class="prevention-suggestions">
+                    <h4>预防建议</h4>
+                    <ul>
+                        <li>保持规律运动，特别是负重运动</li>
+                        <li>控制钠盐摄入，维持健康血压</li>
+                        <li>定期进行骨密度检查</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- 个性化建议卡片 -->
+            <div class="card personalized-suggestions-card">
+                <h2 class="card-title">个性化建议</h2>
+                <div class="suggestions-grid">
+                    <div class="suggestion-category">
+                        <i class="fas fa-utensils"></i>
+                        <h3>饮食改善建议</h3>
+                        <ul>
+                            <li>增加蔬菜水果摄入量至每天500克</li>
+                            <li>减少加工食品和含糖饮料</li>
+                            <li>保证每天摄入足够的蛋白质</li>
+                        </ul>
+                    </div>
+                    <div class="suggestion-category">
+                        <i class="fas fa-running"></i>
+                        <h3>运动方案推荐</h3>
+                        <ul>
+                            <li>每周进行3-4次有氧运动，每次30分钟</li>
+                            <li>每周进行2次力量训练</li>
+                            <li>增加日常活动量，如步行上下班</li>
+                        </ul>
+                    </div>
+                    <div class="suggestion-category">
+                        <i class="fas fa-bed"></i>
+                        <h3>生活方式调整</h3>
+                        <ul>
+                            <li>建立规律的睡眠时间表</li>
+                            <li>学习压力管理技巧（冥想、深呼吸）</li>
+                            <li>减少屏幕时间，增加户外活动</li>
+                        </ul>
+                    </div>
+                    <div class="suggestion-category">
+                        <i class="fas fa-stethoscope"></i>
+                        <h3>定期检查项目</h3>
+                        <ul>
+                            <li>每年一次全面体检</li>
+                            <li>每半年一次血压监测</li>
+                            <li>每年一次骨密度检查</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 底部操作区域 -->
+            <div class="report-actions">
+                <button class="btn btn-complete" onclick="downloadReport()">
+                    <i class="fas fa-download"></i> 下载报告
+                </button>
+                <button class="btn btn-outline" onclick="shareReport()">
+                    <i class="fas fa-share-alt"></i> 分享报告
+                </button>
+                <button class="btn" onclick="reassess()">
+                    <i class="fas fa-redo"></i> 重新评估
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <!-- 页脚 -->
+    <footer>
+        <div class="container">
+            <p>&copy; 2023 AI健康管理助手. 以"治未病"为核心理念，守护您的健康。</p>
+        </div>
+    </footer>
+
+    <script src="../js/main.js"></script>
+    <script>
+        // 获取存储的评估数据
+        let assessmentData = {};
+        let healthScore = 85;
+        let bmi = 22.5;
+
+        // 页面加载时初始化数据
+        document.addEventListener('DOMContentLoaded', function() {
+            loadAssessmentData();
+            updateReportContent();
+            initRadarChart();
+        });
+
+        function loadAssessmentData() {
+            const storedData = localStorage.getItem('assessmentData');
+            const storedScore = localStorage.getItem('healthScore');
+            const storedBMI = localStorage.getItem('bmi');
+            
+            if (storedData) {
+                assessmentData = JSON.parse(storedData);
+            }
+            if (storedScore) {
+                healthScore = parseInt(storedScore);
+            }
+            if (storedBMI) {
+                bmi = parseFloat(storedBMI);
+            }
+        }
+
+        function updateReportContent() {
+            // 设置报告生成时间
+            document.getElementById('report-date').textContent = new Date().toLocaleDateString('zh-CN');
+            
+            // 更新健康评分
+            document.getElementById('overall-score').textContent = healthScore;
+            
+            // 更新健康评级
+            const healthRating = getHealthRating(healthScore);
+            document.getElementById('health-rating').textContent = healthRating.text;
+            document.getElementById('health-rating').className = healthRating.class;
+            
+            // 更新BMI值
+            document.getElementById('bmi-value').textContent = bmi;
+            
+            // 更新BMI指示器位置
+            updateBMIIndicator(bmi);
+            
+            // 更新风险因素列表
+            updateRiskFactors();
+            
+            // 更新进度条
+            updateProgressBars();
+        }
+
+        function getHealthRating(score) {
+            if (score >= 90) return { text: '优秀', class: 'rating-excellent' };
+            if (score >= 80) return { text: '良好', class: 'rating-good' };
+            if (score >= 70) return { text: '一般', class: 'rating-average' };
+            if (score >= 60) return { text: '较差', class: 'rating-poor' };
+            return { text: '危险', class: 'rating-danger' };
+        }
+
+        function updateBMIIndicator(bmi) {
+            const indicator = document.querySelector('.bmi-indicator');
+            let position = 0;
+            
+            if (bmi < 18.5) position = 10;
+            else if (bmi < 24) position = 35;
+            else if (bmi < 28) position = 65;
+            else position = 85;
+            
+            indicator.style.left = position + '%';
+        }
+
+        function updateRiskFactors() {
+            const riskList = document.getElementById('risk-factors-list');
+            riskList.innerHTML = '';
+            
+            const risks = [];
+            
+            if (assessmentData.exercise === 'never' || assessmentData.exercise === 'rarely') {
+                risks.push('运动频率偏低');
+            }
+            
+            if (parseFloat(assessmentData.sleep) < 7) {
+                risks.push('睡眠质量有待改善');
+            }
+            
+            if (assessmentData.stress === 'high') {
+                risks.push('压力水平较高');
+            }
+            
+            if (bmi < 18.5 || bmi > 24.9) {
+                risks.push('体重管理需要关注');
+            }
+            
+            if (risks.length === 0) {
+                risks.push('暂无明显的健康风险因素');
+            }
+            
+            risks.forEach(risk => {
+                const li = document.createElement('li');
+                li.textContent = risk;
+                riskList.appendChild(li);
+            });
+        }
+
+        function updateProgressBars() {
+            // 根据实际数据更新进度条
+            const exerciseValue = getExerciseValue(assessmentData.exercise);
+            const sleepValue = getSleepValue(parseFloat(assessmentData.sleep));
+            const stressValue = getStressValue(assessmentData.stress);
+            
+            updateProgressBar('运动频率', exerciseValue);
+            updateProgressBar('睡眠质量', sleepValue);
+            updateProgressBar('压力水平', stressValue);
+        }
+
+        function getExerciseValue(exercise) {
+            switch(exercise) {
+                case 'often': return 90;
+                case 'sometimes': return 70;
+                case 'rarely': return 40;
+                case 'never': return 20;
+                default: return 50;
+            }
+        }
+
+        function getSleepValue(sleepHours) {
+            if (sleepHours >= 8) return 90;
+            if (sleepHours >= 7) return 70;
+            if (sleepHours >= 6) return 50;
+            return 30;
+        }
+
+        function getStressValue(stress) {
+            switch(stress) {
+                case 'low': return 90;
+                case 'medium': return 60;
+                case 'high': return 30;
+                default: return 50;
+            }
+        }
+
+        function updateProgressBar(label, value) {
+            const progressFill = document.querySelector(`.progress-label:contains("${label}")`)
+                ?.closest('.progress-container')
+                ?.querySelector('.progress-fill');
+            
+            const progressValue = document.querySelector(`.progress-label:contains("${label}")`)
+                ?.closest('.progress-container')
+                ?.querySelector('.progress-value');
+            
+            if (progressFill && progressValue) {
+                progressFill.style.width = value + '%';
+                progressValue.textContent = value + '%';
+            }
+        }
+
+        // 初始化雷达图
+        function initRadarChart() {
+            const ctx = document.getElementById('health-radar-chart').getContext('2d');
+            const radarChart = new Chart(ctx, {
+                type: 'radar',
+                data: {
+                    labels: ['运动频率', '睡眠质量', '压力管理', '饮食均衡', '体重控制', '心血管健康'],
+                    datasets: [{
+                        label: '您的健康指标',
+                        data: [
+                            getExerciseValue(assessmentData.exercise),
+                            getSleepValue(parseFloat(assessmentData.sleep)),
+                            getStressValue(assessmentData.stress),
+                            80, // 饮食均衡（基于BMI和运动情况估算）
+                            bmi >= 18.5 && bmi <= 24.9 ? 90 : 60, // 体重控制
+                            75  // 心血管健康（基于综合评分估算）
+                        ],
+                        backgroundColor: 'rgba(72, 187, 120, 0.2)',
+                        borderColor: '#48BB78',
+                        borderWidth: 2,
+                        pointBackgroundColor: '#48BB78',
+                        pointBorderColor: '#fff',
+                        pointHoverBackgroundColor: '#fff',
+                        pointHoverBorderColor: '#48BB78'
+                    }]
+                },
+                options: {
+                    scales: {
+                        r: {
+                            angleLines: {
+                                display: true
+                            },
+                            suggestedMin: 0,
+                            suggestedMax: 100
+                        }
+                    }
+                }
+            });
+        }
+
+        // 页面功能函数
+        function goBack() {
+            window.history.back();
+        }
+
+        function downloadReport() {
+            alert('健康评估报告已准备好下载！');
+            // 实际实现中这里会生成PDF文件
+        }
+
+        function shareReport() {
+            if (navigator.share) {
+                navigator.share({
+                    title: '我的健康评估报告',
+                    text: '查看我的健康评估结果和建议',
+                    url: window.location.href
+                });
+            } else {
+                alert('分享功能在当前浏览器中不可用');
+            }
+        }
+
+        function reassess() {
+            window.location.href = 'assessment.html';
+        }
+
+        // 添加contains选择器的polyfill
+        if (!Element.prototype.matches) {
+            Element.prototype.matches = Element.prototype.msMatchesSelector;
+        }
+        
+        if (!Element.prototype.closest) {
+            Element.prototype.closest = function(s) {
+                var el = this;
+                do {
+                    if (el.matches(s)) return el;
+                    el = el.parentElement || el.parentNode;
+                } while (el !== null && el.nodeType === 1);
+                return null;
+            };
+        }
+    </script>
+</body>
+</html>

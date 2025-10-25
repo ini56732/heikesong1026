@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>健康评估 - AI健康管理助手</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="../js/auth.js"></script>
+    <script src="../js/api-client.js"></script>
+    <style>
+        .auth-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-left: 2rem;
+        }
+        .user-info {
+            color: white;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+        .logout-btn {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: 1px solid rgba(255,255,255,0.3);
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+        .logout-btn:hover {
+            background: rgba(255,255,255,0.3);
+            transform: translateY(-1px);
+        }
+        #login-link {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: 1px solid rgba(255,255,255,0.3);
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+        #login-link:hover {
+            background: rgba(255,255,255,0.3);
+            transform: translateY(-1px);
+        }
+    </style>
+</head>
+<body>
+    <!-- 头部 -->
+    <header>
+        <div class="container header-content">
+            <div class="logo">
+                <i class="fas fa-heartbeat"></i> AI健康管理助手
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="../index.html">首页</a></li>
+                    <li><a href="assessment.html" class="active">健康评估</a></li>
+                    <li><a href="management.html">日常管理</a></li>
+                    <li><a href="alerts.html">预警提醒</a></li>
+                    <li><a href="services.html">医疗服务</a></li>
+                </ul>
+            </nav>
+            <div class="auth-actions">
+                <div class="user-info" id="user-info"></div>
+                <button class="logout-btn" id="logout-btn" onclick="logout()" style="display:none;">登出</button>
+                <a href="login.html" class="btn btn-small" id="login-link" style="margin: 0;">登录</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- 主要内容 -->
+    <main>
+        <div class="container">
+            <h1 class="section-title">健康评估与画像</h1>
+            
+            <div class="card">
+                <h2 class="card-title">智能问卷</h2>
+                <p class="card-content">通过一系列关于生活习惯、家族史、睡眠、压力等问题进行初步评估</p>
+                
+                <form id="assessment-form">
+                    <div class="form-group">
+                        <label for="age">年龄</label>
+                        <input type="number" id="age" name="age" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="gender">性别</label>
+                        <select id="gender" name="gender" required>
+                            <option value="">请选择</option>
+                            <option value="male">男</option>
+                            <option value="female">女</option>
+                            <option value="other">其他</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="height">身高 (cm)</label>
+                        <input type="number" id="height" name="height" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="weight">体重 (kg)</label>
+                        <input type="number" id="weight" name="weight" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="exercise">每周运动频率</label>
+                        <select id="exercise" name="exercise" required>
+                            <option value="">请选择</option>
+                            <option value="never">从不运动</option>
+                            <option value="rarely">偶尔运动 (1-2次/周)</option>
+                            <option value="sometimes">经常运动 (3-4次/周)</option>
+                            <option value="often">每天运动</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="sleep">平均睡眠时间 (小时)</label>
+                        <input type="number" id="sleep" name="sleep" step="0.5" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="stress">压力水平</label>
+                        <select id="stress" name="stress" required>
+                            <option value="">请选择</option>
+                            <option value="low">低</option>
+                            <option value="medium">中等</option>
+                            <option value="high">高</option>
+                        </select>
+                    </div>
+                    
+                    <button type="submit" class="btn">生成健康报告</button>
+                </form>
+            </div>
+            
+            <div class="card">
+                <h2 class="card-title">数据接入</h2>
+                <p class="card-content">整合您的健康数据，提供更精准的分析</p>
+                
+                <div class="features">
+                    <div class="feature-card">
+                        <i class="fas fa-mobile-alt feature-icon"></i>
+                        <h3>主动接入</h3>
+                        <p>连接Apple Health、Google Fit、华为运动健康等平台</p>
+                        <button class="btn btn-outline" onclick="connectHealthPlatform()">连接健康平台</button>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <i class="fas fa-edit feature-icon"></i>
+                        <h3>手动输入</h3>
+                        <p>记录饮食、体重、心情、血压、血糖等数据</p>
+                        <button class="btn btn-outline" onclick="manualRecord()">手动记录</button>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <i class="fas fa-file-medical feature-icon"></i>
+                        <h3>专业数据</h3>
+                        <p>上传体检报告，自动解析关键指标</p>
+                        <button class="btn btn-outline" onclick="uploadMedicalReport()">上传报告</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- 页脚 -->
+    <footer>
+        <div class="container">
+            <p>&copy; 2023 AI健康管理助手. 以"治未病"为核心理念，守护您的健康。</p>
+        </div>
+    </footer>
+
+    <script src="../js/main.js"></script>
+    <script>
+        // 页面加载完成后更新用户信息
+        document.addEventListener('DOMContentLoaded', function() {
+            updateUserInfo();
+        });
+        
+        // 更新用户信息展示
+        function updateUserInfo() {
+            const userInfo = document.getElementById('user-info');
+            const logoutBtn = document.getElementById('logout-btn');
+            const loginLink = document.getElementById('login-link');
+            
+            const user = AUTH.getCurrentUser();
+            
+            if (user) {
+                userInfo.textContent = '欢迎, ' + user.username + '!';
+                logoutBtn.style.display = 'inline-block';
+                loginLink.style.display = 'none';
+            } else {
+                userInfo.textContent = '';
+                logoutBtn.style.display = 'none';
+                loginLink.style.display = 'inline-block';
+            }
+        }
+        
+        // 登出函数
+        function logout() {
+            if (confirm('你确定要登出吗？')) {
+                AUTH.logout();
+            }
+        }
+        
+        document.getElementById('assessment-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            handleAssessmentSubmit(this);
+        });
+
+        // ... existing code ...
+        function handleAssessmentSubmit(form) {
+            // 获取表单数据
+            const formData = new FormData(form);
+            const assessmentData = {
+                age: parseInt(formData.get('age')),
+                gender: formData.get('gender'),
+                height: parseInt(formData.get('height')),
+                weight: parseInt(formData.get('weight')),
+                exercise: formData.get('exercise'),
+                sleep: parseFloat(formData.get('sleep')),
+                stress: formData.get('stress')
+            };
+
+            // 验证数据
+            if (!validateFormData(assessmentData)) {
+                showNotification('请填写所有必填字段', 'error');
+                return;
+            }
+
+            // 计算BMI
+            const bmi = calculateBMI(assessmentData.height, assessmentData.weight);
+            
+            // 生成健康评分
+            const healthScore = calculateHealthScore(assessmentData, bmi);
+            
+            // 保存数据到localStorage
+            localStorage.setItem('assessmentData', JSON.stringify(assessmentData));
+            localStorage.setItem('healthScore', healthScore.toString());
+            localStorage.setItem('bmi', bmi.toString());
+            
+            // 尝试将数据发送到后端
+            submitAssessmentData(assessmentData, healthScore, bmi);
+        }
+        
+        // 将评估数据提交到后端
+        async function submitAssessmentData(assessmentData, healthScore, bmi) {
+            try {
+                showNotification('正在保存您的健康数据...', 'info');
+                
+                // 提交到后端存储（可选，即使失败也继续跳转）
+                await API.post('/fitness/profile', {
+                    age: assessmentData.age,
+                    gender: assessmentData.gender,
+                    height: assessmentData.height,
+                    weight: assessmentData.weight,
+                    fitness_level: assessmentData.exercise,
+                    health_score: healthScore,
+                    bmi: bmi
+                }).catch(error => {
+                    // 如果后端失败，仍然使用本地存储数据继续
+                    console.warn('后端保存失败，使用本地存储数据', error);
+                    return null;
+                });
+                
+                showNotification('健康数据已保存，正在生成报告...', 'success');
+                
+                // 跳转到报告页面
+                setTimeout(() => {
+                    window.location.href = 'report.html';
+                }, 1500);
+            } catch (error) {
+                handleAPIError(error, '数据保存失败，但将使用本地数据继续');
+                // 仍然跳转到报告页面
+                setTimeout(() => {
+                    window.location.href = 'report.html';
+                }, 2000);
+            }
+        }
+
+        function validateFormData(data) {
+            return data.age && data.gender && data.height && data.weight && 
+                   data.exercise && data.sleep && data.stress;
+        }
+
+        function calculateBMI(height, weight) {
+            const heightInMeters = height / 100;
+            return (weight / (heightInMeters * heightInMeters)).toFixed(1);
+        }
+
+        function calculateHealthScore(data, bmi) {
+            let score = 100;
+            
+            // 年龄因素（假设理想年龄25-45岁）
+            const age = parseInt(data.age);
+            if (age < 25 || age > 45) {
+                score -= 5;
+            }
+            
+            // BMI因素
+            if (bmi < 18.5 || bmi > 24.9) {
+                score -= 10;
+            } else if (bmi >= 18.5 && bmi <= 22.9) {
+                score += 5;
+            }
+            
+            // 运动频率
+            switch(data.exercise) {
+                case 'never': score -= 15; break;
+                case 'rarely': score -= 5; break;
+                case 'sometimes': score += 5; break;
+                case 'often': score += 10; break;
+            }
+            
+            // 睡眠时间
+            const sleepHours = parseFloat(data.sleep);
+            if (sleepHours < 6) {
+                score -= 10;
+            } else if (sleepHours >= 7 && sleepHours <= 9) {
+                score += 5;
+            }
+            
+            // 压力水平
+            switch(data.stress) {
+                case 'high': score -= 10; break;
+                case 'medium': score -= 5; break;
+                case 'low': score += 5; break;
+            }
+            
+            // 确保分数在合理范围内
+            return Math.max(0, Math.min(100, score));
+        }
+    </script>
+</body>
+</html>
