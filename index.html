@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI健康管理助手 - 您的私人健康管家</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .auth-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-left: 2rem;
+        }
+        .user-info {
+            color: white;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+        .logout-btn {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: 1px solid rgba(255,255,255,0.3);
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+        .logout-btn:hover {
+            background: rgba(255,255,255,0.3);
+            transform: translateY(-1px);
+        }
+        #login-link {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: 1px solid rgba(255,255,255,0.3);
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+        #login-link:hover {
+            background: rgba(255,255,255,0.3);
+            transform: translateY(-1px);
+        }
+    </style>
+</head>
+<body>
+    <!-- 头部 -->
+    <header>
+        <div class="container header-content">
+            <div class="logo">
+                <i class="fas fa-heartbeat"></i> AI健康管理助手
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="index.html" class="active">首页</a></li>
+                    <li><a href="pages/assessment.html">健康评估</a></li>
+                    <li><a href="pages/management.html">日常管理</a></li>
+                    <li><a href="pages/alerts.html">预警提醒</a></li>
+                    <li><a href="pages/services.html">医疗服务</a></li>
+                </ul>
+            </nav>
+            <div class="auth-actions">
+                <div class="user-info" id="user-info"></div>
+                <button class="logout-btn" id="logout-btn" onclick="logout()" style="display:none;">登出</button>
+                <a href="pages/login.html" class="btn btn-small" id="login-link" style="margin: 0;">登录</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- 主要内容 -->
+    <main>
+        <div class="container">
+            <section class="hero">
+                <h1 class="section-title">欢迎使用AI健康管理助手</h1>
+                <p style="text-align: center; font-size: 1.2rem; margin-bottom: 2rem; color: #4a5568;">
+                    以"治未病"为核心理念，为您提供千人千面的健康管理方案
+                </p>
+                
+                <div class="card">
+                    <h2 class="card-title">今日健康概览</h2>
+                    <div class="health-overview">
+                        <div class="feature-card">
+                            <i class="fas fa-bed feature-icon"></i>
+                            <h3>睡眠质量</h3>
+                            <p id="sleep-hours">7.5</p>
+                            <p>小时</p>
+                        </div>
+                        <div class="feature-card">
+                            <i class="fas fa-walking feature-icon"></i>
+                            <h3>步数统计</h3>
+                            <p id="steps-count">8500</p>
+                            <p>步</p>
+                        </div>
+                        <div class="feature-card">
+                            <i class="fas fa-tint feature-icon"></i>
+                            <h3>饮水量</h3>
+                            <p id="water-glasses">6</p>
+                            <p>杯</p>
+                        </div>
+                        <div class="feature-card">
+                            <i class="fas fa-heartbeat feature-icon"></i>
+                            <h3>心率</h3>
+                            <p id="heart-rate">72</p>
+                            <p>次/分钟</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="features">
+                    <div class="card feature-card">
+                        <i class="fas fa-file-medical feature-icon"></i>
+                        <h3 class="card-title">健康评估</h3>
+                        <p class="card-content">通过问卷和数据分析，生成您的专属健康报告</p>
+                        <a href="pages/assessment.html" class="btn">开始评估</a>
+                    </div>
+                    
+                    <div class="card feature-card">
+                        <i class="fas fa-utensils feature-icon"></i>
+                        <h3 class="card-title">日常管理</h3>
+                        <p class="card-content">个性化营养师、健身教练、睡眠顾问和心理伙伴</p>
+                        <a href="pages/management.html" class="btn">进入管理</a>
+                    </div>
+                    
+                    <div class="card feature-card">
+                        <i class="fas fa-bell feature-icon"></i>
+                        <h3 class="card-title">预警提醒</h3>
+                        <p class="card-content">实时监控健康数据，异常时及时提醒</p>
+                        <a href="pages/alerts.html" class="btn">查看提醒</a>
+                    </div>
+                    
+                    <div class="card feature-card">
+                        <i class="fas fa-user-md feature-icon"></i>
+                        <h3 class="card-title">医疗服务</h3>
+                        <p class="card-content">AI症状自诊、在线问诊导流、报告解读</p>
+                        <a href="pages/services.html" class="btn">获取服务</a>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- 页脚 -->
+    <footer>
+        <div class="container">
+            <p>&copy; 2023 AI健康管理助手. 以"治未病"为核心理念，守护您的健康。</p>
+        </div>
+    </footer>
+
+    <script src="js/auth.js"></script>
+    <script src="js/main.js"></script>
+    <script>
+        // 页面加载完成后更新健康数据
+        document.addEventListener('DOMContentLoaded', function() {
+            // 更新会话信息
+            updateUserInfo();
+            
+            // 模拟从服务器获取的健康数据
+            const healthData = {
+                sleep: 7.5,
+                steps: 8500,
+                water: 6,
+                heartRate: 72
+            };
+            
+            // 更新健康数据展示
+            updateHealthData(healthData);
+        });
+        
+        // 更新用户信息展示
+        function updateUserInfo() {
+            const userInfo = document.getElementById('user-info');
+            const logoutBtn = document.getElementById('logout-btn');
+            const loginLink = document.getElementById('login-link');
+            
+            const user = AUTH.getCurrentUser();
+            
+            if (user) {
+                userInfo.textContent = '\u6b22迎, ' + user.username + '!';
+                logoutBtn.style.display = 'inline-block';
+                loginLink.style.display = 'none';
+            } else {
+                userInfo.textContent = '';
+                logoutBtn.style.display = 'none';
+                loginLink.style.display = 'inline-block';
+            }
+        }
+        
+        // 登出函数
+        function logout() {
+            if (confirm('\u4f60\u786e\u5b9a\u8981\u767b出\u5417\uff1f')) {
+                AUTH.logout();
+            }
+        }
+    </script>
+</body>
+</html>
